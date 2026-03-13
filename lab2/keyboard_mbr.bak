@@ -83,7 +83,12 @@ display:
 	mov cx, 01h
 	int 10h
 
-	jmp update_cursor
+	; 移动cursor
+	mov ah,02h
+	inc dl
+	int 10h
+
+	jmp loop
 
 handle_tab:
 	mov ah, 09h
@@ -118,7 +123,15 @@ handle_back:
 	mov bh, 0
 	dec dl
 	int 10h
-	jmp truth_back
+
+	; 显示空格
+	mov ah, 09h
+	mov al, ' '
+	mov bl, 0x00
+	mov cx, 1
+	int 10h
+
+	jmp dec_cursor
 
 back_dl:
 	cmp dh, 0
@@ -129,17 +142,7 @@ dec_cursor:
 	mov ah, 02h
 	mov dl, 79
 	dec dh
-	int 10h
-
-truth_back:
-        ; 显示空格
-        mov ah, 09h
-        mov al, ' '
-        mov bl, 0x00
-        mov cx, 1
-        int 10h
-
-        jmp loop
+	jmp loop
 
 check_f:
 	mov al, ah
@@ -151,7 +154,12 @@ check_f:
 	mov cx, 1
 	int 10h
 
-	jmp update_cursor
+	mov ah, 02h
+	inc dl
+	mov bh, 00h
+	int 10h 
+	
+	jmp loop
 
 capslock_change:
 	xor byte [caps_flag], 0x01
@@ -185,19 +193,7 @@ shift_not_pressed:
 	ret
 
 update_cursor:
-	mov ah, 02h
-	mov bh, 0
-	cmp dl, 79
-	je special_update
-	inc dl
-	int 10h
-	jmp loop
 	
-special_update:
-	mov dl, 0
-	inc dh
-	int 10h
-	jmp loop
 
 times 510 - ($ - $$) db 0
 db 0x55, 0xaa
