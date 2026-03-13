@@ -31,10 +31,10 @@ loop1:
 	idiv ecx;
 	mov [color], dl
 
-	; 取打印字符
+	; 更新counter
 	inc byte [counter]
 
-	; 偶数:counter*2%10+'0'
+	; 偶数: counter*2%10+'0'
 	mov al, [counter]
 	mov ah, 0
 	mov cl, 10

@@ -19,10 +19,18 @@ int 0x10
 mov [row],dh
 mov [col],dl
 
-; 移动cursor到1行11列
+; 在当前位置显示a
+mov al, 0x61
 mov bh, 0x00
-mov dh, 0x01
-mov dl, 0x0b
+mov bl, 0x03
+mov cx, 1
+mov ah, 0x09
+int 0x10
+
+; 移动cursor到2行0列
+mov bh, 0x00
+mov dh, 0x02
+mov dl, 0x00
 mov ah, 0x02
 int 0x10
 
