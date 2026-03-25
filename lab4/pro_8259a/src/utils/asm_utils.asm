@@ -4,6 +4,12 @@ global asm_hello_world
 global asm_lidt
 global asm_unhandled_interrupt
 global asm_halt
+global asm_out_port
+global asm_in_port
+global asm_time_interrupt_handler
+global asm_enable_interrupt
+
+extern c_time_interrupt_handler
 
 ASM_UNHANDLED_INTERRUPT_INFO db '[24325166lsm] Unhandled interrupt happened, halt...'
                              db 0

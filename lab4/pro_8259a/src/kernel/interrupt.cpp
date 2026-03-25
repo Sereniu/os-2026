@@ -4,9 +4,9 @@
 #include "asm_utils.h"
 #include "stdio.h"
 
-extern STDIO stdio
+extern STDIO stdio;
 
-int times = 0
+int times = 0;
 
 InterruptManager::InterruptManager()
 {
@@ -23,7 +23,10 @@ void InterruptManager::initialize()
     {
         setInterruptDescriptor(i, (uint32)asm_unhandled_interrupt, 0);
     }
-
+    
+    
+    // 初始化8259A芯片
+    initialize8259A();
 }
 
 void InterruptManager::setInterruptDescriptor(uint32 index, uint32 address, byte DPL)
@@ -85,20 +88,36 @@ void InterruptManager::disableTimeInterrupt()
 // 中断处理函数
 extern "C" void c_time_interrupt_handler()
 {
+    //中断发生次数
+    times++;
+    if (times%2!=0)return;
+    times/=2;
+
     //清空屏幕
     for (int i=0;i<80;i++)
     {
         stdio.print(0,i,' ',0x07);
     }
 
-    //中断发生次数
-    times++;
+    uint8 colors[] = {
+    0x04,   // 红
+    0x06,   // 橙
+    0x0E,   // 黄
+    0x02,   // 绿
+    0x03,   // 青
+    0x01,   // 蓝
+    0x05    // 紫
+    };
+
+   //颜色
+   uint8 color=colors[times%7];
     //输出字符串
-    char str[]="24325166_lsm clock interrupt happen: "
-    int len=45
+    char str[]="24325166_lsm clock interrupt happen: ";
+    int len=38;
 
     for(int i=0;i<len;i++){
-        int col=(i+times)%len
-        stdio.print(0,col,str[i],0x07)
-
+        int col=(i+times)%80;
+        stdio.print(0,col,str[i],color);
+    }
+    times*=2;
 }
